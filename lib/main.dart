@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 Future<void> _messageHandler(RemoteMessage message) async {
   print('background message ${message.notification!.body}');
@@ -42,8 +43,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late FirebaseMessaging messaging;
   String? notificationText;
+  AudioPlayer audioPlayer = AudioPlayer();
   @override
-  void initState() {
+  void initState(){
     super.initState();
     messaging = FirebaseMessaging.instance;
     messaging.subscribeToTopic("normal_message");
@@ -60,10 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
       late Color notificationColor;
       if(event.data['type'] == "normal"){
           notificationColor = Colors.lightBlue;
+          playBell();
       }
       if(event.data['type'] == "important"){
         notificationColor = Colors.red;
+        playSiren();
       }
+
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -71,13 +76,26 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Text(event.notification!.title!),
               content: SingleChildScrollView(child:Column(children:[Text(event.notification!.body!), Image.network(event.notification!.android!.imageUrl!)])),
               backgroundColor: notificationColor,
-              actions: [
+              actions: [Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                 TextButton(
-                  child: Text("Ok"),
+                  child: Text("Close", textAlign: TextAlign.center,),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                )
+                ),
+                if(event.data['type'] == "important") 
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => TrolledScreen()));
+                      }, 
+                    child: Text("dude really this is so important check this out", textAlign: TextAlign.center,)
+                  )
+              ]),
+
+          
+              
               ],
             );
           });
@@ -87,6 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void playBell() async {
+    await audioPlayer.play(AssetSource('sounds/bell.wav'));
+  }
+
+    void playSiren() async {
+    await audioPlayer.play(AssetSource('sounds/siren.mp3'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +120,20 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title!),
       ),
       body: Center(child: Text("Messaging Tutorial")),
+    );
+  }
+}
+
+class TrolledScreen extends StatelessWidget{
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Trolled")
+
+      ),
+      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Row(mainAxisAlignment: MainAxisAlignment.center,children:[Text("i lied it isnt important get trolled"),])])
     );
   }
 }
