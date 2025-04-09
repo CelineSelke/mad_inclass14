@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "504659949155",
+    "project_id": "madinclass14",
+    "storage_bucket": "madinclass14.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504659949155:android:b500141bb025430f462a56",
+        "android_client_info": {
+          "package_name": "com.example.mad_inclass14"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMchsPcAOGO7qrHeQbtMxFsIFZh2CiMcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
