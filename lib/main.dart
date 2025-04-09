@@ -46,20 +46,31 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     messaging = FirebaseMessaging.instance;
-    messaging.subscribeToTopic("messaging");
+    messaging.subscribeToTopic("normal_message");
+    messaging.subscribeToTopic("important_message");
+
     messaging.getToken().then((value) {
+      print("TOKEN");
       print(value);
     });
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       print("message recieved");
       print(event.notification!.body);
       print(event.data.values);
+      late Color notificationColor;
+      if(event.data['type'] == "normal"){
+          notificationColor = Colors.lightBlue;
+      }
+      if(event.data['type'] == "important"){
+        notificationColor = Colors.red;
+      }
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Notification"),
-              content: Text(event.notification!.body!),
+              title: Text(event.notification!.title!),
+              content: SingleChildScrollView(child:Column(children:[Text(event.notification!.body!), Image.network(event.notification!.android!.imageUrl!)])),
+              backgroundColor: notificationColor,
               actions: [
                 TextButton(
                   child: Text("Ok"),
